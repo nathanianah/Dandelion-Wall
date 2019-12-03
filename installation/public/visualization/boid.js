@@ -22,7 +22,9 @@ class Boid {
     this.borders();
     this.render();
 		
-		if(this.velocity.mag() < minVelocity) this.drawFlower = true;	
+    if(this.velocity.mag() < minVelocity) {this.drawFlower = true;	
+    this.flower = new GeneratedFlower(this.id, width / 2, height);
+    }
   }
 
   applyForce(force) {

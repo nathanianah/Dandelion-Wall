@@ -1,7 +1,7 @@
 const radius = 10.0;
 const maxForce = 0.02;    // Maximum steering force
 const maxVelocity = 12;    // Maximum speed
-const minVelocity = 0.01	// Minimum velocity, after which flower blooms
+const minVelocity = 0.03;	// Minimum velocity, after which flower blooms
 
 const petalScale = 0.3;
 

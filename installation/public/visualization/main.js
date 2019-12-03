@@ -46,22 +46,27 @@ function newFlower(data) {
 
 function draw() {
   background(0);
-	
-	
-	for (let i = 0; i < boids.length; i++) {
-		if (flowers[i] == null && boids[i].drawFlower) 
-			flowers[i] = new GeneratedFlower(boids[i].id, width / 2, height);
-		if (flowers[i] != null)
-			flowers[i].update(boids[i].location);
+
+  boids.sort((a, b) => {
+	if (a.location.y < b.location.y) {
+		return -1
+	} else {
+		return 1
 	}
-	
+});	
+
+	for (let i = 0; i < boids.length; i++) {
+if (boids[i].flower){
+		boids[i].flower.update(boids[i].location);
+}
+	}
+
 	// for (let i = 0; i < flowers.length; i++) {
 	// flowers[i].update(boids[i].location); //draw the flowers
 	// }
 
-  for (let i = flowers.length -1; i > -1; i--) {
-    if (flowers[i] != null && flowers[i].flowerScale < 0.02) {
-      flowers.splice(i, 1); //if the flower is very small, kill it
+  for (let i = boids.length -1; i > -1; i--) {
+    if (boids[i].flower && boids[i].flower.flowerScale < 0.02) {
 			boids.splice(i,1);
     }
   }
