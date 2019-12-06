@@ -1,5 +1,4 @@
 var petal;
-
 var buttonGreen;
 var buttonOrange;
 var buttonPurple;
@@ -15,36 +14,40 @@ var submitButton;
 
 var socket;
 var port = (process.env.PORT || 4000);
+var mic;
+var drawnFlower=false;
+var cnv;
+var micOn = false;
+document.addEventListener('touchstart', this.touchstart, {
+  passive: false
+});
+document.addEventListener('touchmove', this.touchmove, {
+  passive: false
+});
 
-window.addEventListener('touchstart', this.touchstart, {
-    passive: false
-  });
-  window.addEventListener('touchmove', this.touchmove, {
-    passive: false
-  });
-  
-  
-  function touchstart(e) {
+function touchstart(e) {
 
-    if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
-      e.preventDefault();
-    }
+  if (mouseX > 30 && mouseX < 180 && mouseY > 130 && mouseY < 430) {
+    e.preventDefault();
   }
-  
-  function touchmove(e) {
-    if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
-        e.preventDefault();
-    }
+}
+
+function touchmove(e) {
+  if (mouseX > 30 && mouseX < 180 && mouseY > 130 && mouseY < 430) {
+    e.preventDefault();
   }
+}
 
 function setup() {
-  //  createCanvas(windowWidth * .9, windowHeight * .85);
-    createCanvas(windowWidth, windowHeight*.85);
 
+  //  createCanvas(windowWidth * .9, windowHeight * .85);
+    cnv = createCanvas(windowWidth-10, windowHeight-10);
+cnv.parent("c");
     bg = loadImage('background.png');
     petal = createGraphics(150, 300);
     petal.pixelDensity(1);
     noSmooth();
+    frameRate(100);
     socket = io.connect(port);
     socket.on('flower', newFlower);
 
@@ -52,51 +55,63 @@ function setup() {
     // buttonGreen.mouseClicked(setActiveButtonGreen);
     buttonGreen.mouseClicked(colorGreen);
     buttonGreen.style('background-color','rgb(184,241,162)');
-    buttonGreen.size(50, 50);
+    buttonGreen.size(windowWidth*0.1, windowHeight*0.1);
+    buttonGreen.position(width/9*0,windowHeight*.85);
 
     buttonOrange= createButton("ORANGE");
     buttonOrange.mouseClicked(colorOrange);
     buttonOrange.style('background-color','rgb(248,196,134)');
-    buttonOrange.size(50, 50);
+    buttonOrange.size(windowWidth*0.1, windowHeight*0.1);
+    buttonOrange.position(width/9*1,windowHeight*.85);
 
     buttonPurple= createButton("PURPLE");
     buttonPurple.mouseClicked(colorPurple);
     buttonPurple.style('background-color','rgb(197,134,248)');
-    buttonPurple.size(50, 50);
+    buttonPurple.size(windowWidth*0.1, windowHeight*0.1);
+    buttonPurple.position(width/9*2,windowHeight*.85);
 
     buttonRed= createButton("RED");
     buttonRed.mouseClicked(colorRed);
     buttonRed.style('background-color','rgb(248,134,134)');
-    buttonRed.size(50, 50);
+    buttonRed.size(windowWidth*0.1, windowHeight*0.1);
+    buttonRed.position(width/9*3,windowHeight*.85);
 
     buttonYellow= createButton("YELLOW");
     buttonYellow.mouseClicked(colorYellow);
     buttonYellow.style('background-color','rgb(255,215,65)');
-    buttonYellow.size(50, 50);
+    buttonYellow.size(windowWidth*0.1, windowHeight*0.1);
+    buttonYellow.position(width/9*4,windowHeight*.85);
 
     buttonBlue= createButton("BLUE");
     buttonBlue.mouseClicked(colorBlue);
     buttonBlue.style('background-color','rgb(179,213,249)');
-    buttonBlue.size(50, 50);
+    buttonBlue.size(windowWidth*0.1, windowHeight*0.1);
+    buttonBlue.position(width/9*5,windowHeight*.85);
 
     buttonPink= createButton("PINK");
     buttonPink.mouseClicked(colorPink);
     buttonPink.style('background-color','rgb(246,177,220)');
-    buttonPink.size(50, 50);
+    buttonPink.size(windowWidth*0.1, windowHeight*0.1);
+    buttonPink.position(width/9*6,windowHeight*.85);
 
     buttonClear= createButton("CLEAR");
     buttonClear.mouseClicked(clearCanvas);
     buttonClear.style('background-color','rgb(255,255,255)');
-    buttonClear.size(50, 50);
+    buttonClear.size(windowWidth*0.1, windowHeight*0.1);
+    buttonClear.position(width/9*7,windowHeight*.85);
 
     submitButton= createButton("SUBMIT");
     submitButton.mouseClicked(sendFlower);
     submitButton.style('background-color','rgb(255,255,255)');
-    submitButton.size(50, 50);
+    submitButton.size(windowWidth*0.1, windowHeight*0.1);
+    submitButton.position(width/9*8,windowHeight*.85);
 
     // setActiveButtonGreen();
     colorGreen();
     clearCanvas();
+
+    mic = new p5.AudioIn();
+    mic.start();
 }
 
 function newFlower(data) {
@@ -104,7 +119,14 @@ function newFlower(data) {
   }
 
 function draw() {
+
+  var vol = mic.getLevel();
+
+  if (vol > .2 && drawnFlower) {
+    sendFlower();
+  }
     background(bg);
+    text(vol,10,10);
     // noFill();
     strokeWeight(2);
     stroke(0);
@@ -113,7 +135,11 @@ function draw() {
     rect(petalBoxOffsetX, petalBoxOffsetY, 150, 300);
     image(petal, petalBoxOffsetX, petalBoxOffsetY);
 
-    if (mouseIsPressed) {
+    if (mouseIsPressed && mouseX >petalBoxOffsetX && mouseX < (petalBoxOffsetX+150) 
+    && mouseY >petalBoxOffsetY && mouseY < (petalBoxOffsetY+300)
+    && pmouseX >petalBoxOffsetX && pmouseX < (petalBoxOffsetX+150) 
+    && pmouseY >petalBoxOffsetY && pmouseY < (petalBoxOffsetY+300)) {
+      drawnFlower=true;
         petal.strokeWeight(10);
         petal.stroke(colorSelected);
         petal.line(mouseX - petalBoxOffsetX, mouseY - petalBoxOffsetY, pmouseX - petalBoxOffsetX, pmouseY - petalBoxOffsetY);
@@ -124,8 +150,8 @@ function draw() {
         var flowerScale = .5 + .05*sin(radians(currFlower*70));
         for (var i = 0; i < petalCount; i++) {
           push();
-          translate(width*3/4,height/2);
-          rotate(radians(i / petalCount * 360 + 5 * sin(radians(2 * i / petalCount * 360 + frameCount + currFlower*40))));
+          translate(width*3/4,height/2-vol*height);
+          rotate(radians(i / petalCount * 360 + (5) * sin(radians(2 * i / petalCount * 360 + frameCount + currFlower*40))));
           translate(-petal.width/2*flowerScale, -petal.height*flowerScale);
           image(petal, 0, 0, petal.width*flowerScale, petal.height*flowerScale);
           pop();
@@ -199,4 +225,11 @@ function sendFlower() {
     socket.emit('flower',data);
     console.log("sending");
     petal.clear();
+    drawnFlower = false;
     }
+
+    function mouseDragged() {
+      mic.input.context.resume();
+      return false;
+    }
+
