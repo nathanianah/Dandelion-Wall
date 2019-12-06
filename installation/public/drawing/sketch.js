@@ -18,6 +18,7 @@ var mic;
 var drawnFlower=false;
 var cnv;
 var micOn = false;
+var drawingBoxSize;
 document.addEventListener('touchstart', this.touchstart, {
   passive: false
 });
@@ -44,9 +45,10 @@ function setup() {
     cnv = createCanvas(windowWidth-10, windowHeight-10);
 cnv.parent("c");
     bg = loadImage('background.png');
-    petal = createGraphics(150, 300);
+    petal = createGraphics(450, 900);
     petal.pixelDensity(1);
     noSmooth();
+    petal.noSmooth();
     frameRate(100);
     socket = io.connect(port);
     socket.on('flower', newFlower);
@@ -112,6 +114,12 @@ cnv.parent("c");
 
     mic = new p5.AudioIn();
     mic.start();
+
+    if (height>width) {
+      drawingBoxSize= width*0.4;
+    } else {
+      drawingBoxSize= height*0.3;
+    }
 }
 
 function newFlower(data) {
@@ -130,24 +138,28 @@ function draw() {
     // noFill();
     strokeWeight(2);
     stroke(0);
-    var petalBoxOffsetX = 30;
-    var petalBoxOffsetY = 130;
-    rect(petalBoxOffsetX, petalBoxOffsetY, 150, 300);
-    image(petal, petalBoxOffsetX, petalBoxOffsetY);
+    var petalBoxOffsetX = drawingBoxSize/4;
+    var petalBoxOffsetY = drawingBoxSize/4;
+    rect(petalBoxOffsetX, petalBoxOffsetY, drawingBoxSize, drawingBoxSize*2);
+    image(petal, petalBoxOffsetX, petalBoxOffsetY, drawingBoxSize, drawingBoxSize*2);
 
-    if (mouseIsPressed && mouseX >petalBoxOffsetX && mouseX < (petalBoxOffsetX+150) 
-    && mouseY >petalBoxOffsetY && mouseY < (petalBoxOffsetY+300)
-    && pmouseX >petalBoxOffsetX && pmouseX < (petalBoxOffsetX+150) 
-    && pmouseY >petalBoxOffsetY && pmouseY < (petalBoxOffsetY+300)) {
+    if (mouseIsPressed && mouseX >petalBoxOffsetX && mouseX < (petalBoxOffsetX+drawingBoxSize) 
+    && mouseY >petalBoxOffsetY && mouseY < (petalBoxOffsetY+drawingBoxSize*2)
+    && pmouseX >petalBoxOffsetX && pmouseX < (petalBoxOffsetX+drawingBoxSize) 
+    && pmouseY >petalBoxOffsetY && pmouseY < (petalBoxOffsetY+drawingBoxSize*2)) {
       drawnFlower=true;
-        petal.strokeWeight(10);
+        petal.strokeWeight(30/150*drawingBoxSize/pixelDensity());
         petal.stroke(colorSelected);
-        petal.line(mouseX - petalBoxOffsetX, mouseY - petalBoxOffsetY, pmouseX - petalBoxOffsetX, pmouseY - petalBoxOffsetY);
+        let mx = map(mouseX,petalBoxOffsetX,petalBoxOffsetX+drawingBoxSize,0,450);
+        let my = map(mouseY,petalBoxOffsetY,petalBoxOffsetY+drawingBoxSize*2,0,900);
+        let pmx = map(pmouseX,petalBoxOffsetX,petalBoxOffsetX+drawingBoxSize,0,450);
+        let pmy = map(pmouseY,petalBoxOffsetY,petalBoxOffsetY+drawingBoxSize*2,0,900);
+        petal.line(mx,my,pmx,pmy);
     }
 
     for (var currFlower = 0; currFlower<1; currFlower++) {
         var petalCount = 12 + floor(3*sin(radians(currFlower*235)));
-        var flowerScale = .5 + .05*sin(radians(currFlower*70));
+        var flowerScale = (.5 + .05*sin(radians(currFlower*70)))/3;
         for (var i = 0; i < petalCount; i++) {
           push();
           translate(width*3/4,height/2-vol*height);

@@ -106,4 +106,7 @@ function addBoid(b) {
 	flowers.push(null);
 }
 
+function windowResized() {
 
+	resizeCanvas(windowWidth, windowHeight);
+}

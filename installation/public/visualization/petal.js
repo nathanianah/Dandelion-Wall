@@ -7,6 +7,6 @@ class Petal {
 	
 	render(speed) {
 		let pwidth = this.petalImg.width * petalScale * speed, pheight = this.petalImg.height * petalScale * speed;
-		image(this.petalImg, -pwidth/4, -pheight/4, pwidth/2, pheight/2);
+		image(this.petalImg, -pwidth/12, -pheight/12, pwidth/6, pheight/6);
 	}
 }
