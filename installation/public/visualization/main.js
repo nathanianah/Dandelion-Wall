@@ -15,7 +15,7 @@ function setup() {
   // Initialize with 5 petals
 	for (let j=0; j<3; j++) {
 let xpos = random(width);
-		let f = Math.floor(random(5,json.flowers.length));
+		let f = Math.floor(random(0,json.flowers.length));
 		 for (let i = 0; i < 5; i++) {
 			addBoid(new Boid(f,xpos+random(-100,100),height));
 			numFlowers++;
@@ -77,7 +77,7 @@ if (boids[i].flower){
 function touchStarted() {
 
 		let xpos = random(width);
-		let f = Math.floor(random(5,json.flowers.length));
+		let f = Math.floor(random(0,json.flowers.length));
 		 for (let i = 0; i < 5; i++) {
 			addBoid(new Boid(f,xpos+random(-100,100),height));
 			numFlowers++;
