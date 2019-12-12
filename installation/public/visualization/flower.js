@@ -3,7 +3,7 @@ var GeneratedFlower = function(p, x, y) {
 	this.xpos = x;
 	this.ypos = y;
 	this.petalCount = floor(random(9, 15));
-	this.flowerScale = random(0.2, 0.3)/3;
+	this.flowerScale = random(0.1, 0.2)/3;
 	this.growth = 0;
 	this.rotateOption = random(-0.0, 0.5);
 	this.growSpeed = random(2.0, 7.0);
@@ -11,7 +11,7 @@ var GeneratedFlower = function(p, x, y) {
 	this.doneMoving = true;
 	this.fanning = floor(random(0.1, 1.9)) * 360;
 	this.stemHeight=0.0;
-	this.death= 720;
+	this.death= 30000;
 	this.leafWidth= random(30,50);
 	this.leafHeight= random(20,40);
 
@@ -22,7 +22,7 @@ GeneratedFlower.prototype.update = function(location) {
 
 	this.xpos = location.x;
 	this.ypos = location.y-this.stemHeight;
-this.stemHeight+= 15*speedCurve(this.growth/50.0);
+this.stemHeight+= 10*speedCurve(this.growth/50.0);
 	if (this.doneMoving) {
 		this.growth++;
 		var leafGrowth= min(1,this.growth/50.0);
@@ -30,7 +30,7 @@ this.stemHeight+= 15*speedCurve(this.growth/50.0);
 		if (this.growth > this.death) {
 			this.flowerScale *= .95;
 			this.globalRotation += 2;
-			this.stemHeight-= 15*speedCurve((this.growth-this.death)/50.0);
+			this.stemHeight-= 10*speedCurve((this.growth-this.death)/50.0);
 			this.ypos = location.y-this.stemHeight;
 			leafGrowth= max(0,1-(this.growth-this.death)/30.0);
 		}

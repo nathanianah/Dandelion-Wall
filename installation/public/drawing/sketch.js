@@ -130,11 +130,11 @@ function draw() {
 
   var vol = mic.getLevel();
 
-  if (vol > .2 && drawnFlower) {
+  if (vol > .25 && drawnFlower) {
     sendFlower();
   }
     background(bg);
-    text(vol,10,10);
+   // text(vol,10,10);
     // noFill();
     strokeWeight(2);
     stroke(0);
@@ -162,7 +162,8 @@ function draw() {
         var flowerScale = (.5 + .05*sin(radians(currFlower*70)))/3;
         for (var i = 0; i < petalCount; i++) {
           push();
-          translate(width*3/4,height/2-vol*height);
+          var volShift = pow((vol*4),3)*height/2;
+          translate(width*3/4,height/2-volShift);
           rotate(radians(i / petalCount * 360 + (5) * sin(radians(2 * i / petalCount * 360 + frameCount + currFlower*40))));
           translate(-petal.width/2*flowerScale, -petal.height*flowerScale);
           image(petal, 0, 0, petal.width*flowerScale, petal.height*flowerScale);

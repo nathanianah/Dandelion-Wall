@@ -5,7 +5,9 @@ var flowers = [];
 var petals = [];
 var socket;
 let port;
-
+var maxFlowers= 50;
+var paddingX=10;
+var paddingY= 10;
 function preload() {
   json = loadJSON("flowers-1.json");
 }
@@ -36,7 +38,7 @@ function newFlower(data) {
 	//flowers.push(new GeneratedFlower(json.flowers.length-1, random(0,width), random(0,height)));
 	let xpos = random(width);
 	
-	 for (let i = 0; i < 5; i++) {
+	 for (let i = 0; i < 3; i++) {
 		addBoid(new Boid(json.flowers.length-1,xpos+random(-100,100),height));
 		numFlowers++;
 	}
@@ -68,9 +70,18 @@ if (boids[i].flower){
   for (let i = boids.length -1; i > -1; i--) {
     if (boids[i].flower && boids[i].flower.flowerScale < 0.02) {
 			boids.splice(i,1);
+			numFlowers--;
     }
   }
   run();
+
+  for( let i=0; i<(numFlowers-maxFlowers); i++) {
+	  let j = floor(random(boids.length));
+	  if (boids[j].flower) {
+	boids[j].flower.growth = boids[j].flower.death;
+	  }
+}
+
 }
 
 // Add a new boid into the System
@@ -89,7 +100,7 @@ function mousePressed() {
 
 	let xpos = random(width);
 		let f = Math.floor(random(5,json.flowers.length));
-		 for (let i = 0; i < 5; i++) {
+		 for (let i = 0; i < 3; i++) {
 			addBoid(new Boid(f,xpos+random(-100,100),height));
 			numFlowers++;
 		 }
